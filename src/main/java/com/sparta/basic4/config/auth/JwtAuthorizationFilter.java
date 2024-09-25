@@ -1,6 +1,5 @@
 package com.sparta.basic4.config.auth;
 
-import com.sparta.basic4.application.service.auth.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,9 +21,9 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final UserDetailsService userService;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserService userService) {
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsService userService) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
@@ -64,7 +64,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userService.getUserByName(username);
+        UserDetails userDetails = userService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

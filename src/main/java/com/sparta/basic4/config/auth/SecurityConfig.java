@@ -1,6 +1,5 @@
 package com.sparta.basic4.config.auth;
 
-import com.sparta.basic4.application.service.auth.UserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,10 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final UserDetailsService userService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    public SecurityConfig(JwtUtil jwtUtil, UserService userService, AuthenticationConfiguration authenticationConfiguration) {
+    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userService, AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         this.authenticationConfiguration = authenticationConfiguration;
@@ -61,7 +61,7 @@ public class SecurityConfig {
                         authorizeHttpRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                                .requestMatchers("/api/user/**").permitAll()
+                                .requestMatchers("/api/user/signUp", "/api/user/login").permitAll()
                                 .requestMatchers("/v3/api-docs/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html").permitAll()

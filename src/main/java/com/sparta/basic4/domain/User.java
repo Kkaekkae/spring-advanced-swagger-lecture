@@ -1,14 +1,13 @@
 package com.sparta.basic4.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -30,23 +29,21 @@ public class User {
 
     private Long kakaoId;
 
-    public User(String username, String password, String email, UserRoleEnum role) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
+    public static User create(String username, String encodedPassword, String email) {
+        return User.builder()
+                .username(username)
+                .password(encodedPassword)
+                .email(email)
+                .role(UserRoleEnum.USER)
+                .build();
     }
 
-    public User(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+    public void update(String username, String email) {
         this.username = username;
-        this.password = password;
         this.email = email;
-        this.role = role;
-        this.kakaoId =kakaoId;
     }
 
-    public User kakaoIdUpdate(Long kakaoId) {
-        this.kakaoId = kakaoId;
-        return this;
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }
